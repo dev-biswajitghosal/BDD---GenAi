@@ -1,0 +1,43 @@
+.header {
+
+    margin-bottom: 20px;
+
+}
+
+.title {
+
+    text-align: center;
+
+    font-size: 28px;
+
+    margin-bottom: 30px;
+
+}
+
+.radio-buttons {
+
+    text-align: center;
+
+}
+
+.radio-buttons .form-check {
+
+    display: inline-block;
+
+    margin-right: 20px;
+
+}
+
+#input {
+    display: none;
+}
+
+.upload-group {
+    display: flex;
+    align-items: center;
+}
+
+.upload-group .form-control {
+    flex-grow: 1;
+    margin-right: 10px;
+}
