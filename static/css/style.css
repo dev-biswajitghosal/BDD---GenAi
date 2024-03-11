@@ -28,13 +28,20 @@
 
 }
 
-#input {
+#bdd-input{
+   display: none;
+}
+#test-input {
     display: none;
 }
 
-.upload-group {
+.upload-bdd {
     display: flex;
     align-items: center;
+}
+
+.upload-test {
+
 }
 
 .upload-group .form-control {

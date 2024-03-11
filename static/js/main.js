@@ -1,16 +1,20 @@
+console.log('main.js loaded');
 const radioButtons = document.querySelectorAll('input[type="radio"]');
-const input = document.getElementById('input');
+const bddInput = document.getElementById('bdd-input');
+const testInput = document.getElementById('test-input');
 const output = document.getElementById('output');
-const infoMessage = document.getElementById('info-message');
+const bddInfoMessage = document.getElementById('bdd-info-message');
+const testInfoMessage = document.getElementById('test-info-message');
 const uploadBtn = document.getElementById('upload-btn');
 const fileInput = document.getElementById('file-input');
 
 radioButtons.forEach(radioButton => {
     radioButton.addEventListener('click', () => {
         const selectedOption = document.querySelector('input[type="radio"]:checked').value;
-        input.style.display = 'block';
         if (selectedOption === 'generate-bdd') {
-            infoMessage.innerHTML = `<b>What Is This About :</b>
+            testInput.style.display = 'none';
+            bddInput.style.display = 'block';
+            bddInfoMessage.innerHTML = `<b>What Is This About :</b>
             <i>Transform Your user stories into BDD feature file scenarios seamlessly.</i>
             <br>
             <b>How To Use:</b>
@@ -22,20 +26,16 @@ radioButtons.forEach(radioButton => {
             </ol>
             <b>File Format:</b>
             <i>Xlsx Format</i>`
-            uploadBtn.innerHTML = 'Generate BDD';
         } else if (selectedOption === 'generate-test-data') {
-            infoMessage.innerHTML = `<b>Test Data Information Message</b>:
+            bddInput.style.display = 'none';
+            testInput.style.display = 'block';
+            testInfoMessage.innerHTML = `<b>Test Data Information Message</b>:
                                   <ul>
                                     <li>What is this about</li>
                                     <li>How to use it</li>
                                     <li>File format</li>
                                     </ul>`;
-            uploadBtn.innerHTML = 'Generate Test Data';
         }
         output.style.display = 'none';
     });
-});
-
-uploadBtn.addEventListener('click', () => {
-    output.style.display = 'block';
 });
