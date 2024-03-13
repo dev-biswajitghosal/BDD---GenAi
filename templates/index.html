@@ -45,7 +45,7 @@
       </div>
       <div class="col-md-8" id="test-input">
         <div id="test-info-message" class="alert alert-info mt-3"></div>
-        <form class="upload-test" method="post" action="/upload-test" enctype="multipart/form-data">
+        <form class="upload-test" method="post" action="/generate_test" enctype="multipart/form-data">
           <label for="lob">Select LOB</label>
           <select class="form-select" name="lob" id="lob" required>
             <option value="" disabled>Select LOB</option>
@@ -59,7 +59,7 @@
                 <option value="oh">OH</option>
             </select>
           <label for="test_cases" class="mt-3">Number of Test Cases</label>
-          <input name="test_cases" id="test_cases" type="number" >
+          <input name="test_cases" id="test_cases" type="number" value="10">
           <button class="btn btn-primary" id="upload-test">Generate Test Data</button>
         </form>
       </div>
