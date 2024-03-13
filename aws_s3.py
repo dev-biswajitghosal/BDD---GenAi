@@ -6,7 +6,6 @@ from openpyxl import load_workbook
 import google.generativeai as genai
 from dotenv import load_dotenv
 import time
-import csv
 
 load_dotenv()
 
@@ -48,7 +47,7 @@ safety_settings = [
 ]
 
 model = genai.GenerativeModel(model_name="gemini-1.0-pro",
-                              generation_config=generation_config,safety_settings=safety_settings)
+                              generation_config=generation_config, safety_settings=safety_settings)
 
 s3_client = boto3.client(
     "s3",
@@ -59,7 +58,6 @@ s3_client = boto3.client(
 
 
 def upload_file_to_s3(username):
-
     file = f"./static/uploads/{username}_input.xlsx"
     file_path = s3_client.upload_file(file, AWS_BDD_INPUT_BUCKET, f'{username}_input.xlsx')
     # print("File uploaded successfully to S3 bucket!")
@@ -90,30 +88,29 @@ def generate_bdd_scenario(username):
         df1.to_csv(csv_buffer, index=False)
         ts = str(int(round(time.time())))
         response = s3_client.put_object(
-            Bucket=AWS_BDD_OUTPUT_BUCKET, Key=f"{username}_output_{ts}.csv", Body=csv_buffer.getvalue()
+            Bucket=AWS_BDD_OUTPUT_BUCKET, Key=f"output_{ts}.csv", Body=csv_buffer.getvalue()
         )
         status = response.get("ResponseMetadata", {}).get("HTTPStatusCode")
         s3 = boto3.resource('s3')
         s3.Object(AWS_ARCHIVE_BUCKET, f'{username}_input_{ts}.xlsx').copy_from(
             CopySource=f'{AWS_BDD_INPUT_BUCKET}/{username}_input.xlsx')
         s3.Object(AWS_BDD_INPUT_BUCKET, f'{username}_input.xlsx').delete()
-        url = f"https://{AWS_BDD_OUTPUT_BUCKET}.s3.amazonaws.com/{username}_output_{ts}.csv"
+        url = f"https://{AWS_BDD_OUTPUT_BUCKET}.s3.amazonaws.com/output_{ts}.csv"
         if status == 200:
-            # print(f"Successful S3 put_object response. Status - {status}")
             return url
         else:
-            # print(f"Unsuccessful S3 put_object response. Status - {status}")
             return None
 
 
-def generate_test_data(username, lob, state, no_of_test_cases):
+def generate_test_data(lob, state, no_of_test_cases):
     responses = []
     s3_client_data = s3_client.get_object(Bucket=AWS_LOB_FILES, Key=f'{lob}.txt')
     contents = s3_client_data['Body'].read()  # Reading the txt file
     # Generate response
-    prompt = (f"Generate {no_of_test_cases} test cases, include state {state} and for the line of business {lob} using "
-              f"the following data\n") + contents.decode('utf-8') + "\n in a csv format."
-    print(prompt)
+    prompt = (f"Generate {no_of_test_cases} test data for a {lob} policy according to the following criteria:\n"
+              f"include state {state} and {lob} for the line of business  using the following data\n"
+              + contents.decode('utf-8') + "\n in a csv format.")
+    # print(prompt)
     convo = model.start_chat()
     convo.send_message(prompt)
     response = convo.last.text
@@ -121,17 +118,13 @@ def generate_test_data(username, lob, state, no_of_test_cases):
     responses.append(response)
     ts = str(int(round(time.time())))
     responses_bytes = response.encode('utf-8')
-    with open(f"{username}_output_{ts}.csv", 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerows(responses)
 
-        response = s3_client.put_object(
-            Bucket=AWS_TEST_OUTPUT_BUCKET, Key=f"{username}_output_{ts}.csv", Body=responses_bytes
-        )
-        status = response.get("ResponseMetadata", {}).get("HTTPStatusCode")
-        # s3 = boto3.resource('s3')
-        url = f"https://{AWS_TEST_OUTPUT_BUCKET}.s3.amazonaws.com/{username}_output_{ts}.csv"
-        if status == 200:
-            return url
-        else:
-            return None
+    response = s3_client.put_object(
+        Bucket=AWS_TEST_OUTPUT_BUCKET, Key=f"{lob}_{ts}.csv", Body=responses_bytes
+    )
+    status = response.get("ResponseMetadata", {}).get("HTTPStatusCode")
+    url = f"https://{AWS_TEST_OUTPUT_BUCKET}.s3.amazonaws.com/{lob}_{ts}.csv"
+    if status == 200:
+        return url
+    else:
+        return None

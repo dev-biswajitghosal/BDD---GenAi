@@ -16,29 +16,6 @@ def home():
     return render_template('index.html')
 
 
-@app.route("/generate-bdd")
-def generate_bdd():
-    username = session['username']
-    url = generate_bdd_scenario(username)
-    if url is None:
-        return render_template('index.html', status="Failed to generate BDD scenario")
-    return render_template('index.html', status="Bdd generated successfully", response=url)
-
-
-@app.route("/generate_test", methods=['POST'])
-def generate_test():
-    if 'username' not in session:
-        session['username'] = str(uuid.uuid4())
-    username = session['username']
-    lob = request.form.get('lob')
-    state = request.form.get('state')
-    test_cases = request.form.get('test_cases')
-    url = generate_test_data(username, lob, state, test_cases)
-    if url is None:
-        return render_template('index.html', status="Failed to generate test data")
-    return render_template('index.html', status="Test data generated successfully", response=url)
-
-
 @app.route("/upload-bdd", methods=['POST'])
 def upload_bdd():
     if 'username' not in session:
@@ -52,6 +29,26 @@ def upload_bdd():
     file.save(file_path)
     upload_file_to_s3(username)
     return redirect('/generate-bdd')
+
+
+@app.route("/generate-bdd")
+def generate_bdd():
+    username = session['username']
+    url = generate_bdd_scenario(username)
+    if url is None:
+        return render_template('index.html', status="Failed to generate BDD scenario")
+    return render_template('index.html', status="Bdd generated successfully", response=url)
+
+
+@app.route("/generate_test", methods=['POST'])
+def generate_test():
+    lob = request.form.get('lob')
+    state = request.form.get('state')
+    test_cases = request.form.get('test_cases')
+    url = generate_test_data(lob, state, test_cases)
+    if url is None:
+        return render_template('index.html', status="Failed to generate test data")
+    return render_template('index.html', status="Test data generated successfully", response=url)
 
 
 if __name__ == "__main__":
