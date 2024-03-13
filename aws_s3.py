@@ -61,7 +61,9 @@ def upload_file_to_s3(username):
     file = f"./static/uploads/{username}_input.xlsx"
     file_path = s3_client.upload_file(file, AWS_BDD_INPUT_BUCKET, f'{username}_input.xlsx')
     # print("File uploaded successfully to S3 bucket!")
-    return file_path
+    if file_path is not None:
+        return file_path
+    return None
 
 
 def generate_bdd_scenario(username):

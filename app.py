@@ -27,8 +27,11 @@ def upload_bdd():
     if os.path.exists(file_path):
         os.remove(file_path)
     file.save(file_path)
-    upload_file_to_s3(username)
-    return redirect('/generate-bdd')
+    is_uploaded = upload_file_to_s3(username)
+    if is_uploaded is not None:
+        os.remove(file_path)
+    return render_template('index.html', upload_status="File uploaded successfully. Generating BDD scenario...")
+    # return redirect('/generate-bdd')
 
 
 @app.route("/generate-bdd")

@@ -18,12 +18,22 @@
     <img src="/static/logo/exavalu.png" alt="Exavalu Logo"
       class="company-name h4 logo" style="width: 100px; height: auto;">
   </nav>
+  {% if upload_status %}
+    <div class="alert alert-danger mt-3">
+        {{ upload_status }}
+    </div>
+  <script>
+        setTimeout(() => {
+            window.location.href = '/generate-bdd';
+        }, 1000);
+    </script>
+  {% endif %}
+
   {% if status %}
     <div class="alert alert-danger mt-3">
         {{ status }}
     </div>
   {% endif %}
-
   <main class="container my-5 p-5 border">
     <div class="radio-buttons">
       <div class="form-check">
@@ -52,7 +62,7 @@
             <option value="personal auto">Personal Auto</option>
             <option value="Homeowners(Condo)">Home owners(Condo)</option>
             <option value="commercial property">Commercial Property</option>
-            <option value="Commercial Auto Policy">Commercial Auto Policy</option>
+            <option value="Commercial Auto">Commercial Auto</option>
             <option value="Workers Compensation">Workers Compensation</option>
           </select>
           <label for="state" class="mt-3">Select State</label>
