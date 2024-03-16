@@ -2,7 +2,8 @@ import os
 import uuid
 
 from flask import Flask, render_template, request, redirect, session
-from aws_s3 import generate_bdd_scenario, generate_test_data , upload_file_to_s3
+from aws_s3 import generate_bdd_from_jira, generate_bdd_scenario, generate_test_data, upload_file_to_s3
+from jira import get_issues
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -38,6 +39,17 @@ def upload_bdd():
 def generate_bdd():
     username = session['username']
     url = generate_bdd_scenario(username)
+    if url is None:
+        return render_template('index.html', status="Failed to generate BDD scenario")
+    return render_template('index.html', status="Bdd generated successfully", response=url)
+
+
+@app.route("/generate_bdd_jira", methods=['POST'])
+def generate_bdd_jira():
+    user_story = get_issues()
+    if len(user_story) == 0:
+        return render_template('index.html', status="No active user stories found")
+    url = generate_bdd_from_jira(user_story)
     if url is None:
         return render_template('index.html', status="Failed to generate BDD scenario")
     return render_template('index.html', status="Bdd generated successfully", response=url)

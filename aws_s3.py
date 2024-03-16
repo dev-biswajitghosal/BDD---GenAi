@@ -66,6 +66,28 @@ def upload_file_to_s3(username):
     return None
 
 
+def generate_bdd_from_jira(user_story):
+    responses = []
+    for story in user_story:
+        convo = model.start_chat()
+        convo.send_message("Generate BDD scenario in feature file format for the  user story " + story)
+        response = convo.last.text
+        responses.append(response)
+    df1 = pd.DataFrame(responses)
+    with io.StringIO() as csv_buffer:
+        df1.to_csv(csv_buffer, index=False)
+        ts = str(int(round(time.time())))
+        response = s3_client.put_object(
+            Bucket=AWS_BDD_OUTPUT_BUCKET, Key=f"output_{ts}.csv", Body=csv_buffer.getvalue()
+        )
+        status = response.get("ResponseMetadata", {}).get("HTTPStatusCode")
+        url = f"https://{AWS_BDD_OUTPUT_BUCKET}.s3.amazonaws.com/output_{ts}.csv"
+        if status == 200:
+            return url
+        else:
+            return None
+
+
 def generate_bdd_scenario(username):
     s3_client_data = s3_client.get_object(Bucket=AWS_BDD_INPUT_BUCKET, Key=f'{username}_input.xlsx')
     contents = s3_client_data['Body'].read()  # your Excel's essence, pretty much a stream
