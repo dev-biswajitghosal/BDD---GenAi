@@ -10,65 +10,80 @@
 </head>
 
 <body>
-<nav class="navbar bg-dark d-flex justify-content-around align-items-center">
+
+<nav class="navbar flex justify-content-around ">
+
+    <img src="/static/logo/exavalu.png" alt="Exavalu Logo"
+         class="company-name">
+    <h1>Testing Accelerator using Gen AI</h1>
     <img
             src="/static/logo/pekin.svg"
-            alt="Customer Logo" class="logo" style="width: 100px; height: auto;">
-    <div class="title text-white">Testing Accelerator using Gen AI</div>
-    <img src="/static/logo/exavalu.png" alt="Exavalu Logo"
-         class="company-name h4 logo" style="width: 100px; height: auto;">
+            alt="Customer Logo" class="logo" style="    width: 100px; height: auto; background:red;">
+
 </nav>
-<div class="loader-container text-center hidden" id="loader">
-    <div class="loader"></div>
+
+<div class="sidebar"></div>
+<nav class="menu">
+    <h3 class="px-2 text-danger">Actions</h3>
+    <ul class="p-0">
+        <li><a href="#">Generate BDD(File)</a></li>
+        <li><a href="#">Generate BDD(Jira)</a></li>
+        <li><a href="#">Generate Test Data</a></li>
+    </ul>
+</nav>
+<p class="hr">
+<p>
+
+    <!--      <ul class="sidebar-content">-->
+    <!--                        <Link class="link" to="/dashboard"><p class="link">Generate BDD</p></Link>-->
+    <!--                        <Link class="link" to="/openWork"><p class="link">Generate Test Data</p></Link> </ul>-->
+    <!--    </div>-->
+    {% if upload_status %}
+<div class="alert alert-danger mt-3" id="alertbdd">
+    {{ upload_status }}
 </div>
-{% if status %}
-<div class="alert alert-danger mt-3">
-    {{ status }}
-</div>
-<!--  remove the status after a few second-->
 <script>
     setTimeout(() => {
-        document.querySelector('.alert').remove();
-    }, 5000);
+        window.location.href = '/generate-bdd';
+    }, 1000);
 </script>
 {% endif %}
-<main class="container p-2 ">
-    <div class="radio-buttons">
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="option" id="generate-bdd" value="generate-bdd">
-            <label class="form-check-label" for="generate-bdd">Generate BDD</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="option" id="generate-test-data"
-                   value="generate-test-data">
-            <label class="form-check-label" for="generate-test-data">Generate Test Data</label>
-        </div>
-    </div>
-    <div class="row m-auto">
-        <div class="col-md-12" id="bdd-input">
+
+{% if status %}
+<div class="alert alert-danger mt-3" id="alert1">
+    {{ status }}
+</div>
+{% endif %}
+<main class="container">
+
+    <div class="row">
+        <div class="col-md-10" id="bdd-input">
             <div id="bdd-info-message" class="alert alert-info mt-3"></div>
-            <!--        <form class="upload-group" method="post" action="/upload-bdd" enctype="multipart/form-data">-->
-            <!--          <input class="form-control" name="file" type="file" id="file-input" accept=".xls,.xlsx" required>-->
-            <!--          <button class="btn btn-danger my-2" id="upload-bdd">Generate BDD</button>-->
-            <!--        </form>-->
-            <form class="upload-group" method="post" action="/generate_bdd_jira" id="myForm">
-                <label for="jira_url" class="form-label">Enter Jira Ticket</label>
-                <input class="form-control" name="jira_url" type="url" id="jira_url" required>
-                <label for="email">Email</label>
-                <input class="form-control" name="email" type="email" id="email" required>
-                <label for="password">Jira Auth Token</label>
-                <input class="form-control" name="password" type="text" id="password" required>
-                <label for="board_id">Board Id</label>
-                <input class="form-control" name="board_id" type="number" id="board_id" required>
-                <label for="sprint_id">Sprint Id</label>
-                <input class="form-control" name="sprint_id" type="number" id="sprint_id" required>
-                <button class="btn btn-danger " id="upload-bdd-jira">Generate BDD from Jira</button>
+            <form class="upload-group" method="post" action="/upload-bdd" enctype="multipart/form-data">
+                <input class="form-control" name="file" type="file" id="file-input" accept=".xls,.xlsx" required>
+                <button class="btn btn-danger mt-5" id="upload-bdd">Generate BDD</button>
             </form>
         </div>
-        <div class="col-md-12" id="test-input">
+        <div class="col-md-10" id="bdd-jira-input">
+            <div id="bdd-jira-info-message" class="alert alert-info mt-3"></div>
+            <form class="upload-group-jira" method="post" action="/generate_bdd_jira" enctype="multipart/form-data">
+                <label for="jira_url">URL:</label>
+                <input class="form-control" type="url" name="jira_url" id="jira_url" required>
+                <label for="email">Email:</label>
+                <input class="form-control" type="email" name="email" id="email" required>
+                <label for="password">Password:</label>
+                <input class="form-control" type="password" name="password" id="password" required>
+                <label for="board_id">Board ID:</label>
+                <input class="form-control" type="number" name="board_id" id="board_id" required>
+                <label for="sprint_id">Sprint ID:</label>
+                <input class="form-control" type="number" name="sprint_id" id="sprint_id" required>
+                <button class="btn btn-danger mt-3" id="upload-jira-bdd">Generate BDD From Jira</button>
+            </form>
+        </div>
+
+        <div class="col-md-8" id="test-input">
             <div id="test-info-message" class="alert alert-info mt-3"></div>
-            <form class="upload-test" id="myTestForm" method="post" action="/generate_test"
-                  enctype="multipart/form-data">
+            <form class="upload-test" method="post" action="/generate_test" enctype="multipart/form-data">
                 <label for="lob">Select LOB</label>
                 <select class="form-select" name="lob" id="lob" required>
                     <option value="" disabled selected>Select LOB</option>
@@ -89,13 +104,14 @@
                     <option value="IN">Indiana (IN)</option>
                 </select>
                 <label for="test_cases" class="mt-3">Number of Test Cases</label>
-                <input name="test_cases" id="test_cases" type="number" placeholder="10" required min="1">
+                <input name="test_cases" id="test_cases" type="number" placeholder="10" required min="1" >
                 <button class="btn btn-danger mx-2" id="upload-test">Generate Test Data</button>
             </form>
         </div>
+
         {% if response %}
         <div class="col-md-4" id="output">
-            <div class="alert alert-danger mt-3">
+            <div class="alert alert-success mt-3">
                 <h3>Download Output File From The Below button</h3>
                 <a href="{{ response }}" class="btn btn-dark mt-3">Download</a>
             </div>

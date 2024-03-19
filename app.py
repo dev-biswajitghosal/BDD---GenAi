@@ -52,7 +52,8 @@ def generate_bdd_jira():
         password = request.form.get('password')
         board_id = request.form.get('board_id')
         sprint_id = request.form.get('sprint_id')
-        user_story = get_issues(jira_url=jira_url, email=email, password=password, board_id=board_id, sprint_id=sprint_id)
+        user_story = get_issues(jira_url=jira_url, email=email, password=password, board_id=board_id,
+                                sprint_id=sprint_id)
         if len(user_story) == 0:
             return render_template('index.html', status="No active user stories found")
         url = generate_bdd_from_jira(user_story)
