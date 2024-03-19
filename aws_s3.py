@@ -72,7 +72,7 @@ def generate_bdd_from_jira(user_story):
         convo = model.start_chat()
         convo.send_message("Generate BDD scenario in feature file format for the  user story " + story)
         response = convo.last.text
-        responses.append(response)
+        responses.append([story, response])
     df1 = pd.DataFrame(responses)
     with io.StringIO() as csv_buffer:
         df1.to_csv(csv_buffer, index=False)

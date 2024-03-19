@@ -52,6 +52,16 @@
             <!--          <button class="btn btn-danger my-2" id="upload-bdd">Generate BDD</button>-->
             <!--        </form>-->
             <form class="upload-group" method="post" action="/generate_bdd_jira" id="myForm">
+                <label for="jira_url" class="form-label">Enter Jira Ticket</label>
+                <input class="form-control" name="jira_url" type="url" id="jira_url" required>
+                <label for="email">Email</label>
+                <input class="form-control" name="email" type="email" id="email" required>
+                <label for="password">Jira Auth Token</label>
+                <input class="form-control" name="password" type="text" id="password" required>
+                <label for="board_id">Board Id</label>
+                <input class="form-control" name="board_id" type="number" id="board_id" required>
+                <label for="sprint_id">Sprint Id</label>
+                <input class="form-control" name="sprint_id" type="number" id="sprint_id" required>
                 <button class="btn btn-danger " id="upload-bdd-jira">Generate BDD from Jira</button>
             </form>
         </div>

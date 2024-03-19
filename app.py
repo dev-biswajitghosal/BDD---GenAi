@@ -46,13 +46,21 @@ def generate_bdd():
 
 @app.route("/generate_bdd_jira", methods=['POST'])
 def generate_bdd_jira():
-    user_story = get_issues()
-    if len(user_story) == 0:
-        return render_template('index.html', status="No active user stories found")
-    url = generate_bdd_from_jira(user_story)
-    if url is None:
-        return render_template('index.html', status="Failed to generate BDD scenario")
-    return render_template('index.html', status="Bdd generated successfully", response=url)
+    try:
+        jira_url = request.form.get('jira_url')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        board_id = request.form.get('board_id')
+        sprint_id = request.form.get('sprint_id')
+        user_story = get_issues(jira_url=jira_url, email=email, password=password, board_id=board_id, sprint_id=sprint_id)
+        if len(user_story) == 0:
+            return render_template('index.html', status="No active user stories found")
+        url = generate_bdd_from_jira(user_story)
+        if url is None:
+            return render_template('index.html', status="Failed to generate BDD scenario")
+        return render_template('index.html', status="Bdd generated successfully", response=url)
+    except:
+        return render_template('index.html', status="Provide correct details")
 
 
 @app.route("/generate_test", methods=['POST'])
