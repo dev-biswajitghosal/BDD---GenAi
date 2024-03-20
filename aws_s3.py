@@ -116,9 +116,9 @@ def generate_bdd_scenario(username):
         )
         status = response.get("ResponseMetadata", {}).get("HTTPStatusCode")
         s3 = boto3.resource('s3')
-        s3.Object(AWS_ARCHIVE_BUCKET, f'{username}_input_{ts}.xlsx').copy_from(
-            CopySource=f'{AWS_BDD_INPUT_BUCKET}/{username}_input.xlsx')
-        s3.Object(AWS_BDD_INPUT_BUCKET, f'{username}_input.xlsx').delete()
+        # s3.Object(AWS_ARCHIVE_BUCKET, f'{username}_input_{ts}.xlsx').copy_from(
+        #     CopySource=f'{AWS_BDD_INPUT_BUCKET}/{username}_input.xlsx')
+        # s3.Object(AWS_BDD_INPUT_BUCKET, f'{username}_input.xlsx').delete()
         url = f"https://{AWS_BDD_OUTPUT_BUCKET}.s3.amazonaws.com/output_{ts}.csv"
         if status == 200:
             return url
