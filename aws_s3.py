@@ -58,12 +58,14 @@ s3_client = boto3.client(
 
 
 def upload_file_to_s3(username):
-    file = f"./static/uploads/{username}_input.xlsx"
-    file_path = s3_client.upload_file(file, AWS_BDD_INPUT_BUCKET, f'{username}_input.xlsx')
-    # print("File uploaded successfully to S3 bucket!")
-    if file_path is not None:
-        return file_path
-    return None
+    try:
+        file = f"./static/uploads/{username}_input.xlsx"
+        s3_client.upload_file(file, AWS_BDD_INPUT_BUCKET, f'{username}_input.xlsx')
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
 
 
 def generate_bdd_from_jira(user_story):
@@ -116,9 +118,9 @@ def generate_bdd_scenario(username):
         )
         status = response.get("ResponseMetadata", {}).get("HTTPStatusCode")
         s3 = boto3.resource('s3')
-        # s3.Object(AWS_ARCHIVE_BUCKET, f'{username}_input_{ts}.xlsx').copy_from(
-        #     CopySource=f'{AWS_BDD_INPUT_BUCKET}/{username}_input.xlsx')
-        # s3.Object(AWS_BDD_INPUT_BUCKET, f'{username}_input.xlsx').delete()
+        s3.Object(AWS_ARCHIVE_BUCKET, f'{username}_input_{ts}.xlsx').copy_from(
+            CopySource=f'{AWS_BDD_INPUT_BUCKET}/{username}_input.xlsx')
+        s3.Object(AWS_BDD_INPUT_BUCKET, f'{username}_input.xlsx').delete()
         url = f"https://{AWS_BDD_OUTPUT_BUCKET}.s3.amazonaws.com/output_{ts}.csv"
         if status == 200:
             return url

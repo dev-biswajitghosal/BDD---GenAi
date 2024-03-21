@@ -10,12 +10,11 @@ load_dotenv()
 # url = "https://kishankumarvm.atlassian.net/rest/agile/1.0/board/4/sprint/2/issue"
 
 
-def get_issues(jira_url, email, password, board_id, sprint_id):
+def get_issues(jira_url, email, password):
     user_story = []
-    url = f"{jira_url}/rest/agile/1.0/board/{board_id}/sprint/{sprint_id}/issue"
-    print(url)
+    # url = "https://kishankumarvm.atlassian.net/rest/agile/1.0/board/4/sprint/2/issue"
     try:
-        response = requests.get(url, auth=(email, password))
+        response = requests.get(jira_url, auth=(email, password))
         for issue in response.json()['issues']:
             if issue['fields']['sprint']['state'] == 'active':
                 user_story.append(issue['fields']['description'])

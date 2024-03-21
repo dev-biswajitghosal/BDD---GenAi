@@ -29,10 +29,10 @@ def upload_bdd():
         os.remove(file_path)
     file.save(file_path)
     is_uploaded = upload_file_to_s3(username)
-    if is_uploaded is not None:
+    if is_uploaded:
         os.remove(file_path)
-    return render_template('index.html', upload_status="File uploaded successfully. Generating BDD scenario...")
-    # return redirect('/generate-bdd')
+        return redirect('/generate-bdd')
+    return render_template('index.html', status="There is some error in uploading file. Please try again.")
 
 
 @app.route("/generate-bdd")
@@ -50,10 +50,7 @@ def generate_bdd_jira():
         jira_url = request.form.get('jira_url')
         email = request.form.get('email')
         password = request.form.get('password')
-        board_id = request.form.get('board_id')
-        sprint_id = request.form.get('sprint_id')
-        user_story = get_issues(jira_url=jira_url, email=email, password=password, board_id=board_id,
-                                sprint_id=sprint_id)
+        user_story = get_issues(jira_url=jira_url, email=email, password=password)
         if len(user_story) == 0:
             return render_template('index.html', status="No active user stories found")
         url = generate_bdd_from_jira(user_story)
