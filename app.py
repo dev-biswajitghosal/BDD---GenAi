@@ -1,9 +1,9 @@
 import os
 import uuid
 
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, jsonify
 from aws_s3 import generate_bdd_from_jira, generate_bdd_scenario, generate_test_data, upload_file_to_s3
-from jira import get_issues
+from jira import get_issues, get_sprintid, get_boardid
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -44,13 +44,47 @@ def generate_bdd():
     return render_template('index.html', status="Bdd generated successfully", response=url)
 
 
+@app.route("/get_bdd_jira_boardid", methods=['POST'])
+def get_bdd_jira_boardid():
+    try:
+        jira_url = request.form.get('jira_url')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        board_ids = get_boardid(jira_url, email, password)
+        return jsonify(board_ids=board_ids)
+
+    except Exception as e:
+        return jsonify(error=str(e))
+
+
+@app.route("/get_bdd_jira_sprintid", methods=['POST'])
+def get_bdd_jira_sprintid():
+    try:
+        jira_url = request.form.get('jira_url')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        board_id = request.form.get('board_id')
+        print(jira_url)
+        print(email)
+        print(password)
+        print(board_id)
+        sprint_ids = get_sprintid(jira_url, email, password, board_id)
+        return jsonify(sprint_ids=sprint_ids)
+
+    except Exception as e:
+        return jsonify(error=str(e))
+
+
 @app.route("/generate_bdd_jira", methods=['POST'])
 def generate_bdd_jira():
     try:
         jira_url = request.form.get('jira_url')
         email = request.form.get('email')
         password = request.form.get('password')
-        user_story = get_issues(jira_url=jira_url, email=email, password=password)
+        board_id = request.form.get('board_id')
+        sprint_id = request.form.get('sprint_id')
+        user_story = get_issues(jira_url=jira_url, email=email, password=password,
+                                board_id=board_id, sprint_id=sprint_id)
         if len(user_story) == 0:
             return render_template('index.html', status="No active user stories found")
         url = generate_bdd_from_jira(user_story)
