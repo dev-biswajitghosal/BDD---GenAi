@@ -17,7 +17,7 @@ def get_boardid(jira_url, email, password):
     try:
         response = requests.get(url, auth=(email, password))
         for value in response.json()['values']:
-            board_id.append(value['id'])
+            board_id.append([value['id'], value['name']])
         return board_id
     except Exception as e:
         print(f"Error: {e}")
@@ -32,7 +32,7 @@ def get_sprintid(jira_url, email, password, board_id):
         response = requests.get(url, auth=(email, password))
         for value in response.json()['values']:
             if value['state'] == 'active':
-                sprint_id.append(value['id'])
+                sprint_id.append([value['id'], value['name']])
         return sprint_id
     except Exception as e:
         print(f"Error: {e}")

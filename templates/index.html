@@ -54,12 +54,6 @@
 </nav>
 <p class="hr">
 <p>
-
-    <!--      <ul class="sidebar-content">-->
-    <!--                        <Link class="link" to="/dashboard"><p class="link">Generate BDD</p></Link>-->
-    <!--                        <Link class="link" to="/openWork"><p class="link">Generate Test Data</p></Link> </ul>-->
-    <!--    </div>-->
-
     {% if status %}
 <div class="alert alert-danger mt-3" id="alert1">
     {{ status }}
@@ -79,7 +73,8 @@
             <div id="bdd-jira-info-message" class="alert alert-info mt-3"></div>
             <form class="upload-group-jira" method="post" action="/generate_bdd_jira" enctype="multipart/form-data">
                 <label for="jira_url">URL:</label>
-                <input class="form-control" type="url" name="jira_url" id="jira_url" placeholder="https://user.atlassian.net" required>
+                <input class="form-control" type="url" name="jira_url" id="jira_url"
+                       placeholder="https://user.atlassian.net" required>
                 <label for="email">Email:</label>
                 <input class="form-control" type="email" name="email" id="email" required placeholder="abc@xyz.com">
                 <label for="password">Password:</label>
@@ -176,7 +171,7 @@
                 success: function(response) {
                     $("#board_id").empty();
                     $.each(response.board_ids, function(index, board_id) {
-                        $("#board_id").append('<option value="' + board_id + '">' + board_id + '</option>');
+                        $("#board_id").append('<option value="' + board_id[0] + '">' + board_id[1] + '</option>');
                     });
                 },
                 error: function(xhr, status, error) {
@@ -209,7 +204,7 @@
                 success: function(response) {
                     $("#sprint_id").empty();
                     $.each(response.sprint_ids, function(index, sprint_id) {
-                        $("#sprint_id").append('<option value="' + sprint_id + '">' + sprint_id + '</option>');
+                        $("#sprint_id").append('<option value="' + sprint_id[0] + '">' + sprint_id[1] + '</option>');
                     });
                 },
                 error: function(xhr, status, error) {
