@@ -24,25 +24,25 @@ generation_config = {
     "temperature": 0.9,
     "top_p": 1,
     "top_k": 1,
-    "max_output_tokens": 2048,
+    "max_output_tokens": 32000,
 }
 
 safety_settings = [
     {
         "category": "HARM_CATEGORY_HARASSMENT",
-        "threshold": "BLOCK_LOW_AND_ABOVE"
+        "threshold": "BLOCK_NONE"
     },
     {
         "category": "HARM_CATEGORY_HATE_SPEECH",
-        "threshold": "BLOCK_LOW_AND_ABOVE"
+        "threshold": "BLOCK_NONE"
     },
     {
         "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-        "threshold": "BLOCK_LOW_AND_ABOVE"
+        "threshold": "BLOCK_NONE"
     },
     {
         "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-        "threshold": "BLOCK_LOW_AND_ABOVE"
+        "threshold": "BLOCK_NONE"
     },
 ]
 
@@ -65,7 +65,6 @@ def upload_file_to_s3(username):
     except Exception as e:
         print(e)
         return False
-
 
 
 def generate_bdd_from_jira(user_story):
