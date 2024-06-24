@@ -24,7 +24,7 @@ generation_config = {
     "temperature": 0.9,
     "top_p": 1,
     "top_k": 1,
-    "max_output_tokens": 32000,
+    "max_output_tokens": 2048,
 }
 
 safety_settings = [
@@ -128,22 +128,28 @@ def generate_bdd_scenario(username):
 
 
 def generate_test_data(lob, state, no_of_test_cases):
-    responses = []
     s3_client_data = s3_client.get_object(Bucket=AWS_LOB_FILES, Key=f'{lob}.txt')
     contents = s3_client_data['Body'].read()  # Reading the txt file
-    # Generate response
-    prompt = (f"Generate {no_of_test_cases} test data for a {lob} policy according to the following criteria:\n"
-              f"include state {state} and {lob} for the line of business  using the following data\n"
-              + contents.decode('utf-8') + "\n in a csv format.")
-    # print(prompt)
-    convo = model.start_chat()
-    convo.send_message(prompt)
-    response = convo.last.text
-    # Save response
-    responses.append(response)
+    responses = []
+    round_of_test_data = int(no_of_test_cases) // 10
+    for test_cases_no in range(round_of_test_data + 1):
+        # Generate response
+        prompt = (f"Generate 10 test data for a {lob} policy according to the following criteria:\n"
+                  f"include state {state} and {lob} for the line of business  using the following data\n"
+                  + contents.decode('utf-8') + "\n in a csv format only.")
+        # print(prompt)
+        convo = model.start_chat()
+        convo.send_message(prompt)
+        response = convo.last.text
+        # Save response
+        if test_cases_no == 0:
+            responses.append(response)
+        else:
+            response = "\n".join(response.split("\n")[1:])
+            responses.append(response)
+        # responses_bytes += response.encode('utf-8')
+    responses_bytes = ("\n".join([response for response in responses])).encode('utf-8')
     ts = str(int(round(time.time())))
-    responses_bytes = response.encode('utf-8')
-
     response = s3_client.put_object(
         Bucket=AWS_TEST_OUTPUT_BUCKET, Key=f"{lob}_{ts}.csv", Body=responses_bytes
     )
